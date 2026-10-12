@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
+import { requireAuth } from '../middleware/auth.js';
+import { validate } from '../middleware/validate.js';
+import * as c from '../controllers/interviewController.js';
+const r = Router();
+const aiLimit = rateLimit({ windowMs: 10 * 60 * 1000, limit: 30, standardHeaders: true, legacyHeaders: false });
+r.use(requireAuth);
+r.get('/', c.list);
+r.post('/start', validate(c.startSchema), c.start);
+r.get('/:id', c.get);
+r.post('/:id/answer', aiLimit, validate(c.answerSchema), c.answer);
+r.post('/:id/finish', c.finish);
+export default r;

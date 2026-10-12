@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
+import { validate } from '../middleware/validate.js';
+import * as c from '../controllers/jobController.js';
+const r = Router();
+r.use(requireAuth);
+r.get('/', c.listJobs);
+r.post('/', validate(c.jobSchema), c.createJob);
+r.get('/applications', c.listApps);
+r.post('/applications', validate(c.appSchema), c.createApp);
+r.patch('/applications/:id', validate(c.statusSchema), c.setStatus);
+export default r;

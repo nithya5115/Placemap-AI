@@ -1,0 +1,18 @@
+import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
+import { validate } from '../middleware/validate.js';
+import rateLimit from 'express-rate-limit';
+import { upload } from '../middleware/upload.js';
+import * as c from '../controllers/resumeController.js';
+const r = Router();
+r.use(requireAuth);
+const uploadLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 20, standardHeaders: true, legacyHeaders: false });
+r.get('/', c.list);
+r.post('/upload', uploadLimiter, upload.single('file'), c.uploadResume);
+r.post('/', validate(c.resumeSchema), c.create);
+r.get('/:id', c.get);
+r.put('/:id', validate(c.resumeSchema), c.update);
+r.delete('/:id', c.remove);
+r.post('/:id/analyze', validate(c.analyzeSchema), c.analyzeResume);
+r.get('/:id/analyses', c.history);
+export default r;

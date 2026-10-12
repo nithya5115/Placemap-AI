@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
+import { validate } from '../middleware/validate.js';
+import * as c from '../controllers/aptitudeController.js';
+const r = Router();
+r.use(requireAuth);
+r.get('/questions', c.questions);
+r.get('/topics', c.topics);
+r.post('/submit', validate(c.submitSchema), c.submit);
+r.get('/history', c.history);
+export default r;
